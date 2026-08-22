@@ -1,18 +1,13 @@
 {
-  "name": "asadboost-backend",
+  "name": "asad-boost",
   "version": "1.0.0",
-  "description": "Practice project - Node.js + Express + SQLite backend (no password collection)",
+  "description": "Practice Project Node.js Express SQLite",
   "main": "server.js",
-  "engines": {
-    "node": ">=22.5.0"
-  },
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "bcrypt": "^6.0.0",
-    "better-sqlite3": "^13.0.3",
-    "cors": "^2.8.6",
-    "express": "^4.22.2"
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
   }
 }
