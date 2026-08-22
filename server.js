@@ -6,10 +6,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, "data.json");
 
-// Middlewares
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(__dirname));
+
+// Express ko bolo ki saari HTML/CSS public folder ke andar hain
+app.use(express.static(path.join(__dirname, "public")));
 
 // Ensure data.json file exists
 if (!fs.existsSync(DATA_FILE)) {
@@ -22,14 +24,17 @@ app.post("/api/requests", (req, res) => {
         const { username, password, package: userPackage } = req.body;
 
         if (!username || !password) {
-            return res.status(400).json({ error: "Username and Password required" });
+            return res.status(400).json({ error: "Username and password required" });
         }
 
-        // Read current data
-        const fileData = fs.readFileSync(DATA_FILE, "utf8");
-        const requests = JSON.parse(fileData || "[]");
+        let requests = [];
+        try {
+            const fileData = fs.readFileSync(DATA_FILE, "utf8");
+            requests = JSON.parse(fileData || "[]");
+        } catch (e) {
+            requests = [];
+        }
 
-        // Add new record
         const newEntry = {
             id: Date.now(),
             username: username,
@@ -39,11 +44,8 @@ app.post("/api/requests", (req, res) => {
         };
 
         requests.push(newEntry);
-
-        // Save updated data
         fs.writeFileSync(DATA_FILE, JSON.stringify(requests, null, 2));
 
-        // Always return valid JSON
         return res.status(200).json({
             success: true,
             username: username,
@@ -61,12 +63,13 @@ app.get("/api/admin/data", (req, res) => {
         const fileData = fs.readFileSync(DATA_FILE, "utf8");
         res.json(JSON.parse(fileData || "[]"));
     } catch (err) {
-        res.status(500).json({ error: "Could not read data" });
+        res.status(500).json({ error: "Failed to read data" });
     }
 });
 
+// Serve index.html directly from public folder
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"));
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.listen(PORT, () => {
