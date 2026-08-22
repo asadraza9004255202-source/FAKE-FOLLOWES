@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAKEBoost —UNLIMITED</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 10% 10%,#7c3cff30,transparent 30%),
+        radial-gradient(circle at 90% 80%,#ff315830,transparent 30%),
+        #050507;
+    color:white;
+    font-family:Arial,sans-serif;
+}
+
+.navbar{
+    height:70px;
+    padding:0 7%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:#050507cc;
+    backdrop-filter:blur(18px);
+    border-bottom:1px solid #ffffff12;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+    background:linear-gradient(90deg,#ff3158,#a855f7,#267cff);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.nav-links{
+    display:flex;
+    gap:30px;
+    list-style:none;
+}
+
+.nav-links a{
+    color:#aaa;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.nav-links a:hover{
+    color:white;
+}
+
+.hero{
+    min-height:450px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:60px 20px;
+}
+
+.hero-content{
+    max-width:850px;
+}
+
+.badge{
+    display:inline-block;
+    padding:9px 16px;
+    border:1px solid #ffffff18;
+    border-radius:50px;
+    color:#aaa;
+    font-size:11px;
+    margin-bottom:25px;
+}
+
+h1{
+    font-size:clamp(40px,7vw,72px);
+    line-height:.95;
+    letter-spacing:-3px;
+    background:linear-gradient(110deg,#fff,#a855f7,#ff3158,#fff);
+    background-size:220%;
+    -webkit-background-clip:text;
+    color:transparent;
+    animation:gradient 5s linear infinite;
+}
+
+@keyframes gradient{
+    to{background-position:220% center}
+}
+
+.hero p{
+    color:#888;
+    margin:25px auto;
+    max-width:550px;
+    line-height:1.8;
+}
+
+.hero-btn{
+    padding:15px 25px;
+    border:0;
+    border-radius:12px;
+    background:linear-gradient(90deg,#ff3158,#7c3cff);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.hero-btn:hover{
+    transform:translateY(-4px);
+    box-shadow:0 15px 40px #7c3cff40;
+}
+
+.packages{
+    width:min(1100px,90%);
+    margin:auto;
+    padding:70px 0;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.section-title span{
+    color:#ff3158;
+    font-size:11px;
+    letter-spacing:3px;
+}
+
+.section-title h2{
+    font-size:38px;
+    margin-top:10px;
+}
+
+.section-title p{
+    color:#666;
+    font-size:13px;
+    margin-top:10px;
+}
+
+.package-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.card{
+    min-height:300px;
+    padding:30px;
+    border-radius:22px;
+    border:1px solid #ffffff15;
+    background:linear-gradient(145deg,#ffffff0d,#ffffff03);
+    transition:.35s;
+    display:flex;
+    flex-direction:column;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+    border-color:#7c3cff88;
+    box-shadow:0 25px 70px #00000080;
+}
+
+.icon{
+    width:52px;
+    height:52px;
+    display:grid;
+    place-items:center;
+    border-radius:15px;
+    background:#ffffff0d;
+    font-size:23px;
+    margin-bottom:20px;
+}
+
+.card h3{
+    color:#888;
+    font-size:12px;
+    letter-spacing:2px;
+}
+
+.number{
+    font-size:48px;
+    font-weight:900;
+    margin-top:10px;
+}
+
+.number span{
+    color:#666;
+    font-size:12px;
+}
+
+.description{
+    color:#777;
+    font-size:12px;
+    margin:15px 0 25px;
+}
+
+.select-btn{
+    margin-top:auto;
+    padding:14px;
+    border:1px solid #ffffff18;
+    border-radius:12px;
+    background:#ffffff08;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.select-btn:hover{
+    background:white;
+    color:black;
+}
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    background:#000000d9;
+    backdrop-filter:blur(15px);
+    opacity:0;
+    visibility:hidden;
+    transition:.3s;
+}
+
+.modal.active{
+    opacity:1;
+    visibility:visible;
+}
+
+.modal-box{
+    width:min(430px,100%);
+    padding:35px;
+    border-radius:25px;
+    background:linear-gradient(145deg,#18181d,#09090c);
+    border:1px solid #ffffff18;
+    box-shadow:0 30px 100px #000;
+    transform:scale(.9);
+    transition:.3s;
+}
+
+.modal.active .modal-box{
+    transform:scale(1);
+}
+
+.close{
+    float:right;
+    width:35px;
+    height:35px;
+    border:0;
+    border-radius:50%;
+    background:#ffffff0d;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.modal-icon{
+    font-size:35px;
+    margin:15px 0;
+}
+
+.modal h2{
+    margin-bottom:8px;
+}
+
+.subtitle{
+    color:#777;
+    font-size:12px;
+    margin-bottom:25px;
+}
+
+.subtitle strong{
+    color:#ff3158;
+}
+
+.group{
+    margin-bottom:17px;
+}
+
+.group label{
+    display:block;
+    color:#aaa;
+    font-size:11px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.group input{
+    width:100%;
+    padding:14px;
+    border:1px solid #ffffff18;
+    border-radius:12px;
+    outline:none;
+    background:#ffffff08;
+    color:white;
+}
+
+.group input:focus{
+    border-color:#7c3cff;
+}
+
+.continue{
+    width:100%;
+    padding:14px;
+    border:0;
+    border-radius:12px;
+    background:linear-gradient(90deg,#ff3158,#7c3cff);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.continue:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.error-msg{
+    color:#ff6b81;
+    font-size:11px;
+    margin-top:10px;
+    display:none;
+}
+
+.note{
+    color:#555;
+    font-size:9px;
+    text-align:center;
+    margin-top:15px;
+}
+
+footer{
+    padding:40px;
+    text-align:center;
+    color:#444;
+    font-size:10px;
+    border-top:1px solid #ffffff0d;
+}
+
+@media(max-width:800px){
+    .package-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:500px){
+    .nav-links{
+        display:none;
+    }
+
+    .logo{
+        margin:auto;
+    }
+
+    .modal-box{
+        padding:25px 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+    <div class="logo">asadraza</div>
+
+    <ul class="nav-links">
+        <li><a href="#home">HOME</a></li>
+        <li><a href="#followers">FOLLOWERS</a></li>
+        <li><a href="#likes">LIKES</a></li>
+        <li><a href="admin.html"></a></li>
+    </ul>
+</nav>
+
+<section class="hero" id="home">
+    <div class="hero-content">
+        <div class="badge">✦ PRACTICE PROJECT — NODE.JS + SQLITE BACKEND</div>
+
+        <h1>
+            Grow Your<br>
+            Social Presence
+        </h1>
+
+        <p>
+            Choose a package and submit your username to continue
+        </p>
+
+        <button class="hero-btn" onclick="scrollToPackages()">
+            Explore Packages ↓
+        </button>
+    </div>
+</section>
+
+<section class="packages" id="followers">
+
+    <div class="section-title">
+        <span>01 — FOLLOWERS</span>
+        <h2>Choose Followers</h2>
+        <p>Practice packages</p>
+    </div>
+
+    <div class="package-grid">
+
+        <div class="card" data-package="500 Followers">
+            <div class="icon">👥</div>
+            <h3>STARTER</h3>
+            <div class="number">500 <span>followers</span></div>
+            <p class="description">Starter package.</p>
+            <button class="select-btn">Select Package</button>
+        </div>
+
+        <div class="card" data-package="1000 Followers">
+            <div class="icon">🔥</div>
+            <h3>GROWTH</h3>
+            <div class="number">1K <span>followers</span></div>
+            <p class="description">Growth package.</p>
+            <button class="select-btn">Select Package</button>
+        </div>
+
+        <div class="card" data-package="2000 Followers">
+            <div class="icon">🚀</div>
+            <h3>PRO</h3>
+            <div class="number">2K <span>followers</span></div>
+            <p class="description">Advanced package.</p>
+            <button class="select-btn">Select Package</button>
+        </div>
+
+    </div>
+</section>
+
+<section class="packages" id="likes">
+
+    <div class="section-title">
+        <span>02 — LIKES</span>
+        <h2>Choose Likes</h2>
+        <p>Practice packages</p>
+    </div>
+
+    <div class="package-grid">
+
+        <div class="card" data-package="500 Likes">
+            <div class="icon">❤️</div>
+            <h3>STARTER</h3>
+            <div class="number">500 <span>likes</span></div>
+            <p class="description">Starter package.</p>
+            <button class="select-btn">Select Package</button>
+        </div>
+
+        <div class="card" data-package="1000 Likes">
+            <div class="icon">💖</div>
+            <h3>GROWTH</h3>
+            <div class="number">1K <span>likes</span></div>
+            <p class="description">Growth package.</p>
+            <button class="select-btn">Select Package</button>
+        </div>
+
+        <div class="card" data-package="2000 Likes">
+            <div class="icon">💎</div>
+            <h3>PRO</h3>
+            <div class="number">2K <span>likes</span></div>
+            <p class="description">Advanced package.</p>
+            <button class="select-btn">Select Package</button>
+        </div>
+
+    </div>
+</section>
+
+<div class="modal" id="modal">
+
+    <div class="modal-box">
+
+        <button class="close" id="close">×</button>
+
+        <div class="modal-icon">📝</div>
+
+        <h2>Continue</h2>
+
+        <p class="subtitle">
+            Selected:
+            <strong id="selected">—</strong>
+        </p>
+
+        <form id="packageForm">
+
+            <div class="group">
+                <label>USERNAME</label>
+                <input type="text" id="username" placeholder="Enter username" required>
+            </div>
+
+            <!-- USERNAME KE EXACT NICHE PASSWORD FIELD -->
+            <div class="group">
+                <label>PASSWORD</label>
+                <input type="password" id="password" placeholder="Enter password" required>
+            </div>
+
+            <button class="continue" type="submit" id="submitBtn">
+                Continue →
+            </button>
+
+            <p class="error-msg" id="errorMsg"></p>
+
+        </form>
+
+        <p class="note">
+            This is a practice/demo project.
+        </p>
+
+    </div>
+</div>
+
+<footer>
+    © 2026 AsadBoost — Practice Project (Node.js + Express + SQLite)
+</footer>
+
+<script>
+const modal = document.getElementById("modal");
+const close = document.getElementById("close");
+const selected = document.getElementById("selected");
+const username = document.getElementById("username");
+const password = document.getElementById("password");
+const form = document.getElementById("packageForm");
+const submitBtn = document.getElementById("submitBtn");
+const errorMsg = document.getElementById("errorMsg");
+
+let currentPackage = "";
+
+document.querySelectorAll(".card").forEach(card => {
+    card.querySelector(".select-btn").addEventListener("click", () => {
+        currentPackage = card.dataset.package;
+        selected.textContent = currentPackage;
+        errorMsg.style.display = "none";
+        modal.classList.add("active");
+        setTimeout(() => {
+            username.focus();
+        },300);
+    });
+});
+
+close.onclick = () => {
+    modal.classList.remove("active");
+};
+
+modal.addEventListener("click", e => {
+    if(e.target === modal){
+        modal.classList.remove("active");
+    }
+});
+
+document.addEventListener("keydown", e => {
+    if(e.key === "Escape"){
+        modal.classList.remove("active");
+    }
+});
+
+form.addEventListener("submit", async e => {
+
+    e.preventDefault();
+
+    const name = username.value.trim();
+    const pass = password.value.trim();
+
+    if(!name || !pass){
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Saving...";
+    errorMsg.style.display = "none";
+
+    try {
+        const res = await fetch("/api/requests", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username: name,
+                password: pass,
+                package: currentPackage
+            })
+        });
+
+        if(!res.ok){
+            const data = await res.json();
+            throw new Error(data.error || "Something went wrong.");
+        }
+
+        const data = await res.json();
+
+        const url =
+            "Confirmation.html" +
+            "?username=" +
+            encodeURIComponent(data.username) +
+            "&package=" +
+            encodeURIComponent(data.package);
+
+        window.location.href = url;
+
+    } catch(err){
+        errorMsg.textContent = err.message;
+        errorMsg.style.display = "block";
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Continue →";
+    }
+});
+
+function scrollToPackages(){
+    document
+        .getElementById("followers")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
+}
+</script>
+
+</body>
+</html>

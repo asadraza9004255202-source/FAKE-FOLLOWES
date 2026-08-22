@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saved Requests (Database)</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 10% 10%,#7c3cff30,transparent 30%),
+        radial-gradient(circle at 90% 80%,#ff315830,transparent 30%),
+        #050507;
+    color:white;
+    font-family:Arial,sans-serif;
+    padding:40px 20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+h1{
+    font-size:clamp(28px, 5vw, 42px);
+    text-align:center;
+    margin-bottom:30px;
+    background:linear-gradient(90deg,#a855f7,#ff3158,#267cff);
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.table-container{
+    width:min(1000px, 100%);
+    background:linear-gradient(145deg,#ffffff0d,#ffffff03);
+    border:1px solid #ffffff15;
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 25px 70px #00000080;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    text-align:left;
+}
+
+th, td{
+    padding:16px 12px;
+    font-size:13px;
+    border-bottom:1px solid #ffffff10;
+}
+
+th{
+    color:#888;
+    font-size:11px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+}
+
+tr:last-child td{
+    border-bottom:none;
+}
+
+.pass-column{
+    color:#ff3158;
+    font-weight:bold;
+    font-family:monospace;
+    font-size:14px;
+}
+
+.delete-btn{
+    padding:8px 16px;
+    border:1px solid #ff315840;
+    border-radius:8px;
+    background:#ff315815;
+    color:#ff3158;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.delete-btn:hover{
+    background:#ff3158;
+    color:white;
+}
+
+.back-link{
+    margin-top:30px;
+    color:#aaa;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.back-link:hover{
+    color:white;
+}
+
+.empty-msg{
+    text-align:center;
+    color:#666;
+    padding:30px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Saved Requests (Database)</h1>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>USERNAME</th>
+                <th>PASSWORD</th>
+                <th>PACKAGE</th>
+                <th>CREATED AT</th>
+                <th>ACTION</th>
+            </tr>
+        </thead>
+        <tbody id="requestsTable">
+            <tr>
+                <td colspan="6" class="empty-msg">Loading data...</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<a href="/" class="back-link">← Back to Home</a>
+
+<script>
+async function loadRequests() {
+    const tableBody = document.getElementById("requestsTable");
+    try {
+        const res = await fetch("/api/requests");
+        if (!res.ok) throw new Error("Failed to load data");
+        const data = await res.json();
+
+        if (data.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="6" class="empty-msg">No saved requests found.</td></tr>';
+            return;
+        }
+
+        tableBody.innerHTML = data.map(row => `
+            <tr>
+                <td>${row.id}</td>
+                <td>${escapeHtml(row.username)}</td>
+                <td class="pass-column">${escapeHtml(row.password || '')}</td>
+                <td>${escapeHtml(row.package)}</td>
+                <td>${row.created_at}</td>
+                <td>
+                    <button class="delete-btn" onclick="deleteRequest(${row.id})">Delete</button>
+                </td>
+            </tr>
+        `).join("");
+
+    } catch (err) {
+        tableBody.innerHTML = `<tr><td colspan="6" class="empty-msg" style="color:#ff6b81;">Error: ${err.message}</td></tr>`;
+    }
+}
+
+async function deleteRequest(id) {
+    if (!confirm("Are you sure you want to delete this record?")) return;
+
+    try {
+        const res = await fetch(`/api/requests/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("Failed to delete");
+        loadRequests();
+    } catch (err) {
+        alert("Error deleting record: " + err.message);
+    }
+}
+
+function escapeHtml(text) {
+    if (!text) return "";
+    return text.toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+loadRequests();
+</script>
+
+</body>
+</html>
