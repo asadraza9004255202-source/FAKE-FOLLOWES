@@ -3,22 +3,20 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+// Railway injected PORT or fallback to 8080
+const PORT = process.env.PORT || 8080;
 const DATA_FILE = path.join(__dirname, "data.json");
 
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Express ko bolo ki saari HTML/CSS public folder ke andar hain
+// Serve static frontend files from 'public' folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// Ensure data.json file exists
 if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(DATA_FILE, JSON.stringify([]));
 }
 
-// API Endpoint for form submission
 app.post("/api/requests", (req, res) => {
     try {
         const { username, password, package: userPackage } = req.body;
@@ -57,7 +55,6 @@ app.post("/api/requests", (req, res) => {
     }
 });
 
-// Admin Route
 app.get("/api/admin/data", (req, res) => {
     try {
         const fileData = fs.readFileSync(DATA_FILE, "utf8");
@@ -67,11 +64,11 @@ app.get("/api/admin/data", (req, res) => {
     }
 });
 
-// Serve index.html directly from public folder
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.listen(PORT, () => {
+// Important: '0.0.0.0' par listen karna Railway ke liye zaroori hai
+app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
 });
