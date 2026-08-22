@@ -3,154 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Request Confirmed</title>
-
+<title>Order Confirmation</title>
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    min-height: 100vh;
+  body {
+    background: #050507;
+    color: white;
+    font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    background:
-        radial-gradient(circle at 20% 20%, #7c3cff40, transparent 30%),
-        radial-gradient(circle at 80% 80%, #ff315830, transparent 30%),
-        #050507;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-
-.box {
-    width: min(480px, 100%);
-    padding: 40px 28px;
+    height: 100vh;
+    margin: 0;
+  }
+  .card {
+    background: #18181d;
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid #ffffff18;
     text-align: center;
-    border: 1px solid #ffffff15;
-    border-radius: 28px;
-    background: linear-gradient(145deg, #ffffff0d, #ffffff03);
-    box-shadow: 0 30px 100px #000;
-    animation: show .7s ease;
-}
-
-@keyframes show {
-    from {
-        opacity: 0;
-        transform: translateY(40px) scale(.9);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.check {
-    width: 80px;
-    height: 80px;
-    display: grid;
-    place-items: center;
-    margin: auto;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #25d366, #267cff);
-    font-size: 40px;
-}
-
-h1 {
-    margin-top: 25px;
-    font-size: 30px;
-}
-
-.main {
-    margin-top: 12px;
-    color: #888;
-    line-height: 1.7;
-    font-size: 14px;
-}
-
-.username {
-    color: #ff3158;
-    font-weight: bold;
-}
-
-.package {
-    margin-top: 25px;
-    padding: 16px;
-    border-radius: 13px;
-    background: #ffffff08;
-    color: #888;
-}
-
-.package strong {
-    color: white;
-}
-
-.status {
-    margin-top: 25px;
-    padding: 16px;
-    border-radius: 13px;
-    background: #25d3660d;
-    border: 1px solid #25d36625;
-    color: #72e69a;
-    font-size: 12px;
-    line-height: 1.7;
-}
-
-.back {
+    max-width: 400px;
+  }
+  h1 { color: #267cff; margin-bottom: 10px; }
+  p { color: #aaa; font-size: 14px; margin: 10px 0; }
+  .btn {
     display: inline-block;
-    margin-top: 25px;
-    padding: 14px 27px;
-    border-radius: 12px;
+    margin-top: 20px;
+    padding: 10px 20px;
     background: linear-gradient(90deg, #ff3158, #7c3cff);
     color: white;
     text-decoration: none;
+    border-radius: 10px;
     font-weight: bold;
-    font-size: 13px;
-}
+  }
 </style>
 </head>
-
 <body>
 
-<div class="box">
-
-    <div class="check">✓</div>
-
-    <h1>Request Saved</h1>
-
-    <p class="main">
-        Your request for
-        <span class="username" id="username">@username</span>
-        has been saved to the database.
-    </p>
-
-    <div class="package">
-        Selected Package:
-        <strong id="package">—</strong>
-    </div>
-
-    <div class="status">
-        ✓ Saved via POST /api/requests<br>
-        View all saved entries on the <a href="admin.html" style="color:#72e69a">admin page</a>.
-    </div>
-
-    <a href="index.html" class="back">
-        ← Back to Home
-    </a>
-
+<div class="card">
+  <h1>Success! 🎉</h1>
+  <p>Thank you, <strong id="userDisplay" style="color:#fff;">-</strong>!</p>
+  <p>Your request for <strong id="pkgDisplay" style="color:#ff3158;">-</strong> has been saved successfully.</p>
+  <a href="/" class="btn">Go Back Home</a>
 </div>
 
 <script>
-const params = new URLSearchParams(location.search);
-
-document.getElementById("username").textContent =
-    "@" + (params.get("username") || "unknown");
-
-document.getElementById("package").textContent =
-    params.get("package") || "—";
+  const params = new URLSearchParams(window.location.search);
+  document.getElementById("userDisplay").textContent = params.get("username") || "User";
+  document.getElementById("pkgDisplay").textContent = params.get("package") || "Selected Package";
 </script>
 
 </body>
