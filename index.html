@@ -384,7 +384,6 @@ footer{
         <li><a href="#home">HOME</a></li>
         <li><a href="#followers">FOLLOWERS</a></li>
         <li><a href="#likes">LIKES</a></li>
-        <li><a href="admin.html">ADMIN</a></li>
     </ul>
 </nav>
 
@@ -568,7 +567,6 @@ document.addEventListener("keydown", e => {
 });
 
 form.addEventListener("submit", async e => {
-
     e.preventDefault();
 
     const name = username.value.trim();
@@ -593,20 +591,19 @@ form.addEventListener("submit", async e => {
             })
         });
 
+        // Safe JSON parsing to prevent crash if body is empty
+        const data = await res.json().catch(() => ({}));
+
         if(!res.ok){
-            const data = await res.json();
-            throw new Error(data.error || "Something went wrong.");
+            throw new Error(data.error || "Server error occurred.");
         }
 
-        const data = await res.json();
-
-        // Redirect URL fixed to lowercase confirmation.html
         const url =
             "confirmation.html" +
             "?username=" +
-            encodeURIComponent(data.username) +
+            encodeURIComponent(data.username || name) +
             "&package=" +
-            encodeURIComponent(data.package);
+            encodeURIComponent(data.package || currentPackage);
 
         window.location.href = url;
 
@@ -619,11 +616,7 @@ form.addEventListener("submit", async e => {
 });
 
 function scrollToPackages(){
-    document
-        .getElementById("followers")
-        .scrollIntoView({
-            behavior:"smooth"
-        });
+    document.getElementById("followers").scrollIntoView({ behavior:"smooth" });
 }
 </script>
 
