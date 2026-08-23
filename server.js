@@ -62,6 +62,32 @@ app.get("/", (req, res) => {
   }
 });
 
+// Confirmation page route (Capital 'C' & Small 'c' dono ko handle karega)
+app.get(["/confirmation.html", "/Confirmation.html"], (req, res) => {
+  const publicConf = path.join(__dirname, "public", "confirmation.html");
+  const rootConf = path.join(__dirname, "confirmation.html");
+  if (fs.existsSync(publicConf)) {
+    res.sendFile(publicConf);
+  } else if (fs.existsSync(rootConf)) {
+    res.sendFile(rootConf);
+  } else {
+    res.status(404).send("confirmation.html file not found!");
+  }
+});
+
+// Admin page route (Capital 'A' & Small 'a' dono ko handle karega)
+app.get(["/admin.html", "/Admin.html"], (req, res) => {
+  const publicAdmin = path.join(__dirname, "public", "admin.html");
+  const rootAdmin = path.join(__dirname, "admin.html");
+  if (fs.existsSync(publicAdmin)) {
+    res.sendFile(publicAdmin);
+  } else if (fs.existsSync(rootAdmin)) {
+    res.sendFile(rootAdmin);
+  } else {
+    res.status(404).send("admin.html file not found!");
+  }
+});
+
 // Create a new account/request -> password is hashed before storing
 app.post("/api/requests", async (req, res) => {
   const { username, password, package: pkg } = req.body;
