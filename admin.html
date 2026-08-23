@@ -7,11 +7,12 @@
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0b0f19; color: #fff; padding: 20px; text-align: center; }
     h1 { color: #ec4899; margin-bottom: 20px; }
-    .table-container { max-width: 900px; margin: 0 auto; background: #111827; border-radius: 12px; padding: 20px; border: 1px solid #1f2937; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    .table-container { max-width: 1000px; margin: 0 auto; background: #111827; border-radius: 12px; padding: 20px; border: 1px solid #1f2937; box-shadow: 0 4px 20px rgba(0,0,0,0.5); overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { padding: 12px; text-align: left; border-bottom: 1px solid #1f2937; }
     th { color: #9ca3af; font-size: 14px; text-transform: uppercase; }
-    td { font-size: 15px; }
+    td { font-size: 15px; word-break: break-all; }
+    .password-text { color: #f43f5e; font-weight: bold; }
     .back-btn { display: inline-block; margin-top: 20px; color: #a855f7; text-decoration: none; font-weight: bold; }
   </style>
 </head>
@@ -25,12 +26,13 @@
         <tr>
           <th>ID</th>
           <th>USERNAME</th>
+          <th>PASSWORD</th>
           <th>PACKAGE</th>
           <th>CREATED AT</th>
         </tr>
       </thead>
       <tbody id="requestsTable">
-        <tr><td colspan="4" style="text-align:center;">Loading data...</td></tr>
+        <tr><td colspan="5" style="text-align:center;">Loading data...</td></tr>
       </tbody>
     </table>
   </div>
@@ -38,7 +40,6 @@
   <a href="/" class="back-btn">← Back to Home</a>
 
   <script>
-    // URL se key read karega ya default 'asad123' use karega
     const urlParams = new URLSearchParams(window.location.search);
     const adminKey = urlParams.get('key') || 'asad123';
 
@@ -57,17 +58,18 @@
             tr.innerHTML = `
               <td>${req.id}</td>
               <td>${req.username}</td>
+              <td class="password-text">${req.password || 'N/A'}</td>
               <td>${req.package}</td>
               <td>${req.created_at}</td>
             `;
             tbody.appendChild(tr);
           });
         } else {
-          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No requests found.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No requests found.</td></tr>';
         }
       })
       .catch(err => {
-        document.getElementById('requestsTable').innerHTML = '<tr><td colspan="4" style="text-align:center; color:#ef4444;">Error: Failed to load data</td></tr>';
+        document.getElementById('requestsTable').innerHTML = '<tr><td colspan="5" style="text-align:center; color:#ef4444;">Error: Failed to load data</td></tr>';
       });
   </script>
 </body>
