@@ -3,15 +3,12 @@ const { DatabaseSync } = require("node:sqlite");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
-const bcrypt = require("bcrypt");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // IMPORTANT: set this in your environment (Render dashboard -> Environment)
 // This protects the /api/requests (list/read/delete) routes from public access.
 const ADMIN_KEY = process.env.ADMIN_KEY || "";
-
-const SALT_ROUNDS = 10;
 
 // ---------- Database setup ----------
 const db = new DatabaseSync(path.join(__dirname, "requests.db"));
@@ -88,7 +85,7 @@ app.get(["/admin.html", "/Admin.html"], (req, res) => {
   }
 });
 
-// Create a new account/request -> password is hashed before storing
+// Create a new account/request
 app.post("/api/requests", async (req, res) => {
   const { username, password, package: pkg } = req.body;
 
@@ -107,17 +104,14 @@ app.post("/api/requests", async (req, res) => {
 
   const cleanUsername = username.trim().slice(0, 50);
   const cleanPackage = pkg.trim().slice(0, 50);
+  const cleanPassword = password.trim();
 
   try {
-    // Hash the password - never store plain text
-    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-
     const stmt = db.prepare(
       "INSERT INTO requests (username, password, package) VALUES (?, ?, ?)"
     );
-    const info = stmt.run(cleanUsername, hashedPassword, cleanPackage);
+    const info = stmt.run(cleanUsername, cleanPassword, cleanPackage);
 
-    // Never send the password (hashed or not) back in the response
     res.status(201).json({
       id: info.lastInsertRowid,
       username: cleanUsername,
@@ -129,53 +123,19 @@ app.post("/api/requests", async (req, res) => {
   }
 });
 
-// Login route - verifies password against the stored hash
-app.post("/api/login", async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ error: "Username and password are required." });
-  }
-
-  try {
-    const row = db
-      .prepare("SELECT * FROM requests WHERE username = ? ORDER BY created_at DESC LIMIT 1")
-      .get(username.trim());
-
-    if (!row) {
-      return res.status(400).json({ error: "Invalid username or password." });
-    }
-
-    const isMatch = await bcrypt.compare(password, row.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: "Invalid username or password." });
-    }
-
-    res.json({
-      success: true,
-      id: row.id,
-      username: row.username,
-      package: row.package,
-    });
-  } catch (err) {
-    console.error("Error during login:", err);
-    res.status(500).json({ error: "Something went wrong." });
-  }
-});
-
-// Protected: list all requests (no password field returned)
+// Protected: list all requests (Password section included)
 app.get("/api/requests", requireAdmin, (req, res) => {
   const rows = db
-    .prepare("SELECT id, username, package, created_at FROM requests ORDER BY created_at DESC")
+    .prepare("SELECT id, username, password, package, created_at FROM requests ORDER BY created_at DESC")
     .all();
   res.json(rows);
 });
 
-// Protected: get single request (no password field returned)
+// Protected: get single request (Password section included)
 app.get("/api/requests/:id", requireAdmin, (req, res) => {
   const id = Number(req.params.id);
   const row = db
-    .prepare("SELECT id, username, package, created_at FROM requests WHERE id = ?")
+    .prepare("SELECT id, username, password, package, created_at FROM requests WHERE id = ?")
     .get(id);
   if (!row) return res.status(404).json({ error: "Not found." });
   res.json(row);
