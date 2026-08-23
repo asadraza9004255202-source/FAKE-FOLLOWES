@@ -1,13 +1,18 @@
 {
-  "name": "asad-boost",
+  "name": "FAKE-FOLLOWERS",
   "version": "1.0.0",
-  "description": "Practice Project Node.js Express SQLite",
+  "description": "Practice project - Node.js + Express + SQLite backend (no password collection)",
   "main": "server.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "sqlite3": "^5.1.7"
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^13.0.3",
+    "cors": "^2.8.6",
+    "express": "^4.22.2"
   }
 }
