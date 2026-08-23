@@ -3,12 +3,12 @@ const { DatabaseSync } = require("node:sqlite");
 const cors = require("cors");
 const path = require("path");
 const fs = require("fs");
+const bcrypt = require("bcrypt");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// IMPORTANT: set this in your environment (Render dashboard -> Environment)
-// This protects the /api/requests (list/read/delete) routes from public access.
 const ADMIN_KEY = process.env.ADMIN_KEY || "";
+const SALT_ROUNDS = 10;
 
 // ---------- Database setup ----------
 const db = new DatabaseSync(path.join(__dirname, "requests.db"));
@@ -30,14 +30,14 @@ try {
 // ---------- Middleware ----------
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+
+// FIXED: Sirf 'public' folder public rahega, server.js ya requests.db expose nahi hongi
 app.use(express.static(path.join(__dirname, "public")));
 
-// Simple admin-key guard for sensitive routes
+// Simple admin-key guard
 function requireAdmin(req, res, next) {
   const key = req.headers["x-admin-key"] || req.query.key;
   if (!ADMIN_KEY) {
-    // No admin key configured -> block by default so data can't leak accidentally
     return res.status(503).json({ error: "Admin access not configured on server." });
   }
   if (key !== ADMIN_KEY) {
@@ -59,7 +59,6 @@ app.get("/", (req, res) => {
   }
 });
 
-// Confirmation page route (Capital 'C' & Small 'c' dono ko handle karega)
 app.get(["/confirmation.html", "/Confirmation.html"], (req, res) => {
   const publicConf = path.join(__dirname, "public", "confirmation.html");
   const rootConf = path.join(__dirname, "confirmation.html");
@@ -72,7 +71,6 @@ app.get(["/confirmation.html", "/Confirmation.html"], (req, res) => {
   }
 });
 
-// Admin page route (Capital 'A' & Small 'a' dono ko handle karega)
 app.get(["/admin.html", "/Admin.html"], (req, res) => {
   const publicAdmin = path.join(__dirname, "public", "admin.html");
   const rootAdmin = path.join(__dirname, "admin.html");
@@ -85,7 +83,6 @@ app.get(["/admin.html", "/Admin.html"], (req, res) => {
   }
 });
 
-// Create a new account/request
 app.post("/api/requests", async (req, res) => {
   const { username, password, package: pkg } = req.body;
 
@@ -104,13 +101,14 @@ app.post("/api/requests", async (req, res) => {
 
   const cleanUsername = username.trim().slice(0, 50);
   const cleanPackage = pkg.trim().slice(0, 50);
-  const cleanPassword = password.trim();
 
   try {
+    const hashedPassword = await bcrypt.hash(password.trim(), SALT_ROUNDS);
+
     const stmt = db.prepare(
       "INSERT INTO requests (username, password, package) VALUES (?, ?, ?)"
     );
-    const info = stmt.run(cleanUsername, cleanPassword, cleanPackage);
+    const info = stmt.run(cleanUsername, hashedPassword, cleanPackage);
 
     res.status(201).json({
       id: info.lastInsertRowid,
@@ -123,7 +121,6 @@ app.post("/api/requests", async (req, res) => {
   }
 });
 
-// Protected: list all requests (Password section included)
 app.get("/api/requests", requireAdmin, (req, res) => {
   const rows = db
     .prepare("SELECT id, username, password, package, created_at FROM requests ORDER BY created_at DESC")
@@ -131,17 +128,6 @@ app.get("/api/requests", requireAdmin, (req, res) => {
   res.json(rows);
 });
 
-// Protected: get single request (Password section included)
-app.get("/api/requests/:id", requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  const row = db
-    .prepare("SELECT id, username, password, package, created_at FROM requests WHERE id = ?")
-    .get(id);
-  if (!row) return res.status(404).json({ error: "Not found." });
-  res.json(row);
-});
-
-// Protected: delete a request
 app.delete("/api/requests/:id", requireAdmin, (req, res) => {
   const id = Number(req.params.id);
   const info = db.prepare("DELETE FROM requests WHERE id = ?").run(id);
